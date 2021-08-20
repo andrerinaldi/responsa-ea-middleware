@@ -1,0 +1,17 @@
+{
+  "moduleFileExtensions": [
+    "js",
+    "json",
+    "ts"
+  ],
+  "rootDir": ".",
+  "testEnvironment": "node",
+  "testRegex": ".e2e-spec.ts$",
+  "transform": {
+    "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "moduleNameMapper": {
+    "@responsa/responsa/(.*)": "<rootDir>/../libs/responsa/src/$1",
+    "@responsa/responsa": "<rootDir>/../libs/responsa/src"
+  }
+}

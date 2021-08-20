@@ -1,0 +1,19 @@
+{
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "src",
+  "projects": {
+    "responsa": {
+      "type": "library",
+      "root": "libs/responsa",
+      "entryFile": "index",
+      "sourceRoot": "libs/responsa/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/responsa/tsconfig.lib.json"
+      }
+    }
+  },
+  "compilerOptions": {
+    "webpack": true,
+    "assets": ["**/i18n/**/*.json"]
+  }
+}

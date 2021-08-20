@@ -1,0 +1,105 @@
+{
+  "name": "responsa-ea-middleware",
+  "version": "0.9.0",
+  "description": "",
+  "author": "",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "prebuild": "rimraf dist",
+    "build": "nest build",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"libs/**/*.ts\"",
+    "start": "node dist/main.js",
+    "start:dev": "nest start --watch",
+    "start:debug": "nest start --debug --watch",
+    "start:prod": "node dist/main",
+    "lint": "eslint \"{src,apps,libs}/**/*.ts\" --fix",
+    "jest:ci": "jest --forceExit --ci --testResultsProcessor=jest-multiple-result-processors --coverage=true",
+    "test": "jest --forceExit",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage",
+    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+    "test:e2e": "jest --config ./test/jest-e2e.json"
+  },
+  "dependencies": {
+    "@nestjs/axios": "^0.0.1",
+    "@nestjs/common": "^8.0.0",
+    "@nestjs/config": "^1.0.1",
+    "@nestjs/core": "^8.0.0",
+    "@nestjs/mapped-types": "*",
+    "@nestjs/mongoose": "^8.0.1",
+    "@nestjs/platform-express": "^8.0.0",
+    "botbuilder": "^4.14.1",
+    "botbuilder-choices": "^4.0.0-preview1.2",
+    "class-transformer": "^0.4.0",
+    "class-validator": "^0.13.1",
+    "form-data": "^3.0.1",
+    "mongodb-memory-server": "^7.3.6",
+    "mongoose": "^5.13.7",
+    "reflect-metadata": "^0.1.13",
+    "rimraf": "^3.0.2",
+    "rxjs": "^7.2.0"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^8.0.0",
+    "@nestjs/schematics": "^8.0.0",
+    "@nestjs/testing": "^8.0.4",
+    "@types/express": "^4.17.13",
+    "@types/jest": "^26.0.24",
+    "@types/node": "^16.0.0",
+    "@types/supertest": "^2.0.11",
+    "@typescript-eslint/eslint-plugin": "^4.28.2",
+    "@typescript-eslint/parser": "^4.28.2",
+    "eslint": "^7.30.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "jest": "27.0.6",
+    "jest-junit-reporter": "^1.1.0",
+    "jest-multiple-result-processors": "^0.0.3",
+    "jest-sonar-reporter": "^2.0.0",
+    "prettier": "^2.3.2",
+    "supertest": "^6.1.4",
+    "ts-jest": "^27.0.3",
+    "ts-loader": "^9.2.3",
+    "ts-node": "^10.0.0",
+    "tsconfig-paths": "^3.10.1",
+    "typescript": "^4.3.5"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "maxWorkers": 1,
+    "rootDir": ".",
+    "testRegex": ".*\\.spec\\.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "collectCoverageFrom": [
+      "**/*.(t|j)s"
+    ],
+    "coverageDirectory": "./coverage",
+    "testEnvironment": "node",
+    "roots": [
+      "<rootDir>/src/",
+      "<rootDir>/libs/"
+    ],
+    "moduleNameMapper": {
+      "^@responsa/responsa(|/.*)$": "<rootDir>/libs/responsa/src/$1",
+      "@responsa/responsa": "<rootDir>/libs/responsa/src"
+    },
+    "globalSetup": "<rootDir>/test/globalSetup.ts",
+    "globalTeardown": "<rootDir>/test/globalTeardown.ts"
+  },
+  "jestTestResultProcessors": [
+    "jest-junit-reporter",
+    "jest-sonar-reporter"
+  ],
+  "jestSonar": {
+    "reportPath": ".",
+    "reportFile": "test-report-sonar.xml",
+    "indent": 4
+  }
+}

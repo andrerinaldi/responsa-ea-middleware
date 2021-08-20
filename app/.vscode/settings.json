@@ -1,0 +1,20 @@
+{
+  "standard.enable": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true
+  },
+  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+  "editor.formatOnSave": true,
+  "editor.tabSize": 2,
+  "jest.jestCommandLine": "npm run test --",
+  "jest.debugCodeLens.showWhenTestStateIn": [
+    "fail",
+    "pass",
+    "skip",
+    "unknown"
+  ],
+  "jest.autoRun": {
+    "watch": false
+  },
+  "editor.formatOnPaste": true
+}
