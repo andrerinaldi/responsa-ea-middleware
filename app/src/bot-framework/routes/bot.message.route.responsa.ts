@@ -1,59 +1,47 @@
-import { Injectable, OnModuleInit } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { ResponsaService } from '@responsa/responsa'
-import Responsa from '@responsa/responsa/types/responsa'
-import { Activity, ActivityHandler, TurnContext } from 'botbuilder-core'
-import { SessionStorageService } from '../session-storage'
-import { Session } from '../session-storage/types'
-import { BotSessionData } from './bot-session-data.interface'
-import { BotMessagesConverter } from './bot.message.converter'
-import { BotMessageRouter } from './routes/bot.message.router'
+import { Activity, TurnContext } from 'botbuilder'
+import { Session } from '../../session-storage/types'
+import { SessionStorageService } from '../../session-storage'
+import Responsa from '../../../libs/responsa/src/types/responsa'
+import { BotSessionData } from '../bot-session-data.interface'
+import { BotMessageRoute } from './bot.message.route'
+import { BotMessageRouteResult } from './bot.message.route.result'
+import { BotMessagesConverter } from '../bot.message.converter'
 
 @Injectable()
-export class BotMessagesHandler
-  extends ActivityHandler
-  implements OnModuleInit
-{
+export class BotMessageRouteResponsa extends BotMessageRoute {
   constructor(
-    private readonly config: ConfigService,
-    private readonly converter: BotMessagesConverter,
-    private readonly responsa: ResponsaService,
-    private readonly sessionStore: SessionStorageService,
-    private readonly router: BotMessageRouter
+    config: ConfigService,
+    sessionStore: SessionStorageService,
+    responsa: ResponsaService,
+    private readonly converter: BotMessagesConverter
   ) {
-    super()
+    super(config, sessionStore, responsa)
   }
 
-  onModuleInit() {
-    this.onMessage(async (context: TurnContext, next: () => Promise<void>) => {
-      const activity = context.activity
-      const route = this.router.route(activity)
-      const result = await route.receive(context, activity)
-      if (!result.accomplished) {
-        await this.router.defaultRoute.receive(context, activity)
-      }
-      next()
-    })
-
-    this.onConversationUpdate(
-      async (context: TurnContext, next: () => Promise<void>) => {
-        const activity = context.activity
-        const shouldHandle =
-          activity.membersAdded &&
-          activity.membersAdded.some((m) => m.id === activity.recipient.id)
-        if (shouldHandle) {
-          const session = await this.sessionStore.get<BotSessionData>(
-            activity.conversation.id
-          )
-          if (!session) {
-            await context.sendActivity({ type: 'typing' })
-            await this.initConversation(context, activity)
-          }
-        }
-
-        next()
-      }
+  async receive(c: TurnContext, a: Activity): Promise<BotMessageRouteResult> {
+    console.log(this.constructor.name)
+    const session = await this.sessionStore.get<BotSessionData>(
+      a.conversation.id
     )
+    if (session) {
+      await c.sendActivity({ type: 'typing' })
+      await this.continueConversation(c, session, a)
+    } else {
+      if (
+        a.membersAdded &&
+        a.membersAdded.some((m) => m.id === a.recipient.id)
+      ) {
+        await c.sendActivity({ type: 'typing' })
+        await this.initConversation(c, a)
+      }
+    }
+
+    return {
+      accomplished: true
+    }
   }
 
   private async initConversation(context: TurnContext, data: Activity) {
@@ -125,6 +113,8 @@ export class BotMessagesHandler
       })
     }
 
-    await context.sendActivities(response)
+    if (response.length > 0) {
+      await context.sendActivities(response)
+    }
   }
 }

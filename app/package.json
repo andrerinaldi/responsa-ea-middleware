@@ -36,9 +36,11 @@
     "form-data": "^3.0.1",
     "mongodb-memory-server": "^7.3.6",
     "mongoose": "^5.13.7",
+    "nestjs-pino": "^2.2.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
-    "rxjs": "^7.2.0"
+    "rxjs": "^7.2.0",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@nestjs/cli": "^8.0.0",
@@ -57,6 +59,7 @@
     "jest-junit-reporter": "^1.1.0",
     "jest-multiple-result-processors": "^0.0.3",
     "jest-sonar-reporter": "^2.0.0",
+    "pino-pretty": "^6.0.0",
     "prettier": "^2.3.2",
     "supertest": "^6.1.4",
     "ts-jest": "^27.0.3",
