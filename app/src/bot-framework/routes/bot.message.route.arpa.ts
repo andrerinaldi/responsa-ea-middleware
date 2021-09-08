@@ -5,6 +5,7 @@ import { TurnContext } from 'botbuilder-core'
 import { Activity } from 'botframework-schema'
 import { SessionStorageService } from '../../session-storage'
 import { ArpaProxy } from '../arpa/arpa-proxy'
+import { LiveChatStatus } from '../arpa/types/live-chat-status'
 import { BotSessionData } from '../bot-session-data.interface'
 import { BotMessageRoute } from './bot.message.route'
 import { BotMessageRouteResult } from './bot.message.route.result'
@@ -28,9 +29,17 @@ export class BotMessageRouteArpa extends BotMessageRoute {
     const bfID = a.conversation.id
     const s = await this.sessionStore.get<BotSessionData>(bfID)
     if (s) {
-      if (s.arpaConversationId) {
-        await this.arpa.sendMessage(bfID, a.text)
-        result.accomplished = true
+      if (s.arpa?.id) {
+        const status = this.getLiveChatStatus(a)
+        if (
+          status === LiveChatStatus.UNAVAILABLE ||
+          status === LiveChatStatus.CLOSED
+        ) {
+          const res = await this.arpa.closeConversation(bfID, status)
+        } else {
+          await this.arpa.sendMessage(bfID, a.text)
+          result.accomplished = true
+        }
       } else {
         const hasAgents = await this.arpa.hasAvailableAgents()
         if (hasAgents) {
@@ -44,5 +53,16 @@ export class BotMessageRouteArpa extends BotMessageRoute {
     }
 
     return result
+  }
+
+  private getLiveChatStatus(a: Activity): LiveChatStatus {
+    if (a.channelData.proxyTo === 'callmeback')
+      return LiveChatStatus.UNAVAILABLE
+    if (
+      a.channelData.proxyTo === 'closed' ||
+      a.channelData.proxyTo === 'conversationComplete'
+    )
+      return LiveChatStatus.CLOSED
+    return LiveChatStatus.OPEN
   }
 }

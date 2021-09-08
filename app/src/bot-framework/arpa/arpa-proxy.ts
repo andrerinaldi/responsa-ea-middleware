@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common'
 import { SessionStorageService } from 'src/session-storage';
 import { BotSessionData } from '../bot-session-data.interface';
 import { ArpaService } from './arpa.service';
+import { LiveChatStatus } from './types/live-chat-status';
 
 @Injectable()
 export class ArpaProxy {
@@ -25,7 +26,17 @@ export class ArpaProxy {
         await this.sessionStorage.update<BotSessionData>(
           conversationId,
           {
-            arpaConversationId: res2.guid
+            arpa: {
+              id: res2.guid,
+              status: LiveChatStatus.OPEN
+            }
+          }
+        )
+      } else {
+        await this.sessionStorage.update<BotSessionData>(
+          conversationId,
+          {
+            arpa: undefined
           }
         )
       }
@@ -38,5 +49,17 @@ export class ArpaProxy {
   async sendMessage(conversationId: string, msg: string): Promise<boolean> {
     const res = await this.service.sendMessage(conversationId, msg)
     return res.direction === 1 && res.text === msg
+  }
+
+  async closeConversation(conversationId: string, status: LiveChatStatus): Promise<void> {
+    const session = await this.sessionStorage.get<BotSessionData>(conversationId)
+    if (session) {
+      if (session?.arpa) {
+        session.arpa.status = status
+      }
+      await this.sessionStorage.update<BotSessionData>(conversationId, session)
+    }
+
+    // TODO - throw err
   }
 }

@@ -1,4 +1,5 @@
 import { Choices } from '../../libs/responsa/src/types/responsa'
+import { LiveChatStatus } from './arpa/types/live-chat-status'
 
 export enum BotMessageSender {
   BOT,
@@ -12,10 +13,15 @@ export interface BotHistoryMessage {
   text: string
 }
 
+export interface ArpaChat {
+  id: string
+  status: LiveChatStatus
+}
+
 export interface BotSessionData {
   botId?: string
   conversationId?: string
-  arpaConversationId?: string
+  arpa?: ArpaChat
   lastChoices?: Choices
   history?: BotHistoryMessage[]
 }
